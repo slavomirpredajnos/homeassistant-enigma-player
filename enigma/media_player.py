@@ -129,7 +129,8 @@ class EnigmaMediaPlayer(MediaPlayerDevice):
             reference = urllib.parse.quote_plus(self.get_bouquet_reference())
             _LOGGER.debug("Enigma: [load_sources] - Request reference %s ",
                           reference)
-            epgbouquet_xml = self.request_call('/web/epgnow?bRef=' + reference)
+            #epgbouquet_xml = self.request_call('/web/epgnow?bRef=' + reference)
+            epgbouquet_xml = self.request_call('/web/epgnow?bRef=' + reference.replace('%','%25').replace(' ','%20').replace(':','%3a'))
 
             # Channels name
             soup = BeautifulSoup(epgbouquet_xml, 'html.parser')
@@ -208,7 +209,8 @@ class EnigmaMediaPlayer(MediaPlayerDevice):
             # the picon url
             if reference != '' and reference != 'N/A' and \
                             not reference.startswith('1:0:0:0:0:0:0:0:0:0:'):
-                xml = self.request_call('/web/epgservicenow?sRef=' + reference)
+                #xml = self.request_call('/web/epgservicenow?sRef=' + reference)
+                xml = self.request_call('/web/epgservicenow?sRef=' + reference.replace('%','%25').replace(' ','%20').replace(':','%3a'))
                 soup = BeautifulSoup(xml, 'html.parser')
                 eventtitle = soup.e2eventtitle.renderContents().decode('UTF8')
                 if self._password != DEFAULT_PASSWORD:
@@ -263,7 +265,8 @@ class EnigmaMediaPlayer(MediaPlayerDevice):
                           self._host, volmuted)
 
             # Concatenate Channel and Title name to display
-            self._selected_source = (servicename + ' - ' + eventtitle)
+            #self._selected_source = (servicename + ' - ' + eventtitle)
+            self._selected_source = (servicename)
         return True
 
 # GET - Name
@@ -344,7 +347,8 @@ class EnigmaMediaPlayer(MediaPlayerDevice):
     def async_select_source(self, source):
         """Select input source."""
         _LOGGER.debug("Enigma: [async_select_source] - Change source channel")
-        self.request_call('/web/zap?sRef=' + self._sources[source])
+        #self.request_call('/web/zap?sRef=' + self._sources[source])
+        self.request_call('/web/zap?sRef=' + self._sources[source].replace('%','%25').replace(' ','%20').replace(':','%3a'))
 
 # SET - Volume up
     @asyncio.coroutine
